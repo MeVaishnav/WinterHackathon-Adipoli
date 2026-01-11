@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
-import Topbar from "./components/Topbar";
+import Sidebar from "./components/layout/Sidebar";
+import Topbar from "./components/layout/Topbar";
 import Dashboard from "./pages/Dashboard";
 import Vendors from "./pages/Vendors";
 import Analytics from "./pages/Analytics";
