@@ -1,0 +1,6 @@
+avg_monthly_sales,sales_variance,repayment_history,late_payments,years_active,transaction_count,customer_rating,dispute_count,outstanding_loans,gst_compliance,trust_score,risk_label
+50000,0.12,0.95,1,5,120,4.6,0,1,1,85,Low
+20000,0.45,0.70,4,2,40,3.9,2,3,0,58,High
+35000,0.22,0.88,2,3,75,4.2,1,2,1,72,Medium
+42000,0.18,0.91,1,4,95,4.4,0,1,1,80,Low
+28000,0.35,0.75,3,2,55,4.0,1,2,0,62,Medium
