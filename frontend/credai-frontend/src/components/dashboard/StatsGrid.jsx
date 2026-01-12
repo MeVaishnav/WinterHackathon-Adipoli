@@ -1,19 +1,28 @@
-import { Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import SummaryCard from "./SummaryCard";
 
 export default function StatsGrid({ data }) {
   return (
-    <Grid container spacing={2} mt={2}>
-      {data.summary.map((card) => (
-        <Grid item xs={12} sm={6} md={3} key={card.id}>
-          <SummaryCard
-            title={card.title}
-            value={card.value}
-            subtitle={card.subtitle}
-            color={card.color}
-          />
-        </Grid>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gap: 2,
+        width: "100%",
+        mt: 2,
+      }}
+    >
+      {data.summary.map((item) => (
+        <SummaryCard
+          key={item.id}
+          id={item.id}
+          title={item.title}
+          value={item.value}
+          subtitle={item.subtitle}
+          color={item.color}
+          icon={item.icon}
+        />
       ))}
-    </Grid>
+    </Box>
   );
 }
