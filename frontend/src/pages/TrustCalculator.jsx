@@ -23,6 +23,12 @@ export default function TrustCalculator() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
+  // NEW: State for backend insights
+  const [explanation, setExplanation] = useState(null);
+  const [improvement, setImprovement] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [backendError, setBackendError] = useState(null);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -30,6 +36,8 @@ export default function TrustCalculator() {
   const handleSubmit = async () => {
     setError("");
     setResult(null);
+    setExplanation(null);
+    setImprovement(null);
 
     try {
       const res = await axios.post("http://localhost:8000/ml/predict", {
@@ -41,6 +49,37 @@ export default function TrustCalculator() {
       });
 
       setResult(res.data);
+
+      // ✅ NEW: Save result to localStorage for Analytics page
+      localStorage.setItem("trust_score_data", JSON.stringify(res.data));
+
+      // ==========================
+      // NEW BACKEND AI API SECTION
+      // ==========================
+      setLoading(true);
+      setBackendError(null);
+
+      try {
+        const score = res.data.trust_score; // extract trust score
+
+        const explanationRes = await axios.post(
+          "http://127.0.0.1:8000/trust-score/explanation",
+          { score }
+        );
+
+        const improvementRes = await axios.post(
+          "http://127.0.0.1:8000/trust-score/improvement",
+          { score }
+        );
+
+        setExplanation(explanationRes.data);
+        setImprovement(improvementRes.data);
+      } catch (err) {
+        console.error(err);
+        setBackendError("Failed to load AI insights from backend.");
+      } finally {
+        setLoading(false);
+      }
     } catch (err) {
       setError(
         err.response?.data?.detail?.[0]?.msg ||
@@ -133,8 +172,7 @@ export default function TrustCalculator() {
                 <b>Risk Level:</b> {result.risk_level}
               </Typography>
               <Typography>
-                <b>Approval Probability:</b>{" "}
-                {result.approval_probability}%
+                <b>Approval Probability:</b> {result.approval_probability}%
               </Typography>
               <Typography>
                 <b>Recommended Limit:</b> ₹
@@ -144,6 +182,45 @@ export default function TrustCalculator() {
                 <b>Interest Rate:</b> {result.interest_rate}
               </Typography>
             </Alert>
+          )}
+
+          {/* NEW: AI Insight UI Blocks */}
+          {loading && (
+            <Alert severity="info" sx={{ mt: 2 }}>
+              Fetching insights...
+            </Alert>
+          )}
+
+          {backendError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {backendError}
+            </Alert>
+          )}
+
+          {explanation && (
+            <Card sx={{ mt: 2, p: 2, borderRadius: 2, background: "#eef7ff" }}>
+              <Typography variant="h6">📌 Why This Score?</Typography>
+              <Typography sx={{ mt: 1 }}>
+                <b>Internal Reason:</b> {explanation.internal_reason}
+              </Typography>
+              <Typography sx={{ mt: 1 }}>
+                <b>External Context:</b> {explanation.external_context}
+              </Typography>
+            </Card>
+          )}
+
+          {improvement && (
+            <Card sx={{ mt: 2, p: 2, borderRadius: 2, background: "#eaffec" }}>
+              <Typography variant="h6">🚀 How to Improve?</Typography>
+
+              {improvement.recommended_actions?.map((action, idx) => (
+                <Typography key={idx}>• {action}</Typography>
+              ))}
+
+              <Typography sx={{ mt: 1 }}>
+                <b>External Context:</b> {improvement.external_context}
+              </Typography>
+            </Card>
           )}
         </CardContent>
       </Card>

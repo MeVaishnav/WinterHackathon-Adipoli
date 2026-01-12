@@ -15,21 +15,22 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import CalculateIcon from "@mui/icons-material/Calculate";
 
-
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
-  { text: "Dashboard", icon: <Dashboard />, path: "/" },
-  { text: "Vendors", icon: <People />, path: "/vendors" },
-  { text: "Analytics", icon: <Analytics />, path: "/analytics" },
-  { text: "Loans", icon: <AccountBalance />, path: "/loans" },
-
-  // ✅ NEW (safe addition)
-  { text: "Trust Calculator", icon: <CalculateIcon />, path: "/trust-calculator" },
-];
-
+    { text: "Dashboard", icon: <Dashboard />, path: "/" },
+    // ✅ NEW (safe addition)
+    {
+      text: "Trust Calculator",
+      icon: <CalculateIcon />,
+      path: "/trust-calculator",
+    },
+    { text: "Vendors", icon: <People />, path: "/vendors" },
+    { text: "Analytics", icon: <Analytics />, path: "/analytics" },
+    { text: "About Us", icon: <AccountBalance />, path: "/loans" },
+  ];
 
   return (
     <Drawer

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import AddVendorModal from "../components/AddVendorModal";
+
 import {
   Table,
   TableBody,
@@ -23,6 +25,7 @@ function getStatus(trust) {
 
 export default function Vendors() {
   const [vendors, setVendors] = useState([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     loadVendors();
@@ -43,16 +46,19 @@ export default function Vendors() {
         <Typography variant="h4" fontWeight="bold">
           Vendor Monitoring
         </Typography>
-        <Button variant="contained">+ Add Vendor</Button>
+        <Button variant="contained" onClick={() => setOpen(true)}>
+          + Add Vendor
+        </Button>
       </Box>
 
       <TableContainer component={Paper} sx={{ borderRadius: 3 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Vendor</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Age</TableCell>
+              <TableCell>Phone</TableCell>
               <TableCell width={200}>Trust Score</TableCell>
-              <TableCell>Credit Points</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
@@ -64,10 +70,11 @@ export default function Vendors() {
                 <TableRow key={v.id}>
                   <TableCell>
                     <Typography fontWeight="bold">{v.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      GST: {v.gst_number}
-                    </Typography>
                   </TableCell>
+
+                  <TableCell>{v.age}</TableCell>
+
+                  <TableCell>{v.phone_number}</TableCell>
 
                   <TableCell>
                     <Box display="flex" alignItems="center" gap={1}>
@@ -80,13 +87,9 @@ export default function Vendors() {
                           borderRadius: 5,
                         }}
                       />
-                      <Typography fontWeight="bold">
-                        {v.trust_score}
-                      </Typography>
+                      <Typography fontWeight="bold">{v.trust_score}</Typography>
                     </Box>
                   </TableCell>
-
-                  <TableCell>{v.credit_points}</TableCell>
 
                   <TableCell>
                     <Chip
@@ -101,6 +104,13 @@ export default function Vendors() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Add Vendor Modal */}
+      <AddVendorModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSuccess={loadVendors}
+      />
     </Box>
   );
 }
