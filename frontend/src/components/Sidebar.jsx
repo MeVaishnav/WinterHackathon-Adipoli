@@ -13,17 +13,23 @@ import {
   AccountBalance,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
+import CalculateIcon from "@mui/icons-material/Calculate";
+
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
-    { text: "Dashboard", icon: <Dashboard />, path: "/" },
-    { text: "Vendors", icon: <People />, path: "/vendors" },
-    { text: "Analytics", icon: <Analytics />, path: "/analytics" },
-    { text: "Loans", icon: <AccountBalance />, path: "/loans" },
-  ];
+  { text: "Dashboard", icon: <Dashboard />, path: "/" },
+  { text: "Vendors", icon: <People />, path: "/vendors" },
+  { text: "Analytics", icon: <Analytics />, path: "/analytics" },
+  { text: "Loans", icon: <AccountBalance />, path: "/loans" },
+
+  // ✅ NEW (safe addition)
+  { text: "Trust Calculator", icon: <CalculateIcon />, path: "/trust-calculator" },
+];
+
 
   return (
     <Drawer

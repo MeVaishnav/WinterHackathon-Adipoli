@@ -1,120 +1,106 @@
-import { useEffect, useState } from 'react';
-import { 
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
-  Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions,
-  Typography, CircularProgress, Chip
-} from '@mui/material';
-import { getVendors, createVendor } from '../api/api';
+import { useEffect, useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Box,
+  LinearProgress,
+  Chip,
+  Button,
+} from "@mui/material";
+import { getVendors } from "../api/api";
 
-const Vendors = () => {
+function getStatus(trust) {
+  if (trust >= 80) return { label: "Excellent", color: "success" };
+  if (trust >= 50) return { label: "Moderate", color: "warning" };
+  return { label: "High Risk", color: "error" };
+}
+
+export default function Vendors() {
   const [vendors, setVendors] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', gst_number: '', credit_points: 500 });
 
   useEffect(() => {
-    fetchVendors();
+    loadVendors();
   }, []);
 
-  const fetchVendors = async () => {
+  const loadVendors = async () => {
     try {
-      const response = await getVendors();
-      setVendors(response.data);
-    } catch (error) {
-      console.error('Error fetching vendors:', error);
-    } finally {
-      setLoading(false);
+      const res = await getVendors();
+      setVendors(res.data);
+    } catch (err) {
+      console.error(err);
     }
   };
-
-  const handleSubmit = async () => {
-    try {
-      await createVendor(formData);
-      setOpen(false);
-      setFormData({ name: '', gst_number: '', credit_points: 500 });
-      fetchVendors();
-    } catch (error) {
-      console.error('Error creating vendor:', error);
-      alert('Error creating vendor. GST might already exist.');
-    }
-  };
-
-  const getRiskColor = (risk) => {
-    const colors = { Low: 'success', Medium: 'warning', High: 'error' };
-    return colors[risk] || 'default';
-  };
-
-  if (loading) return <CircularProgress />;
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <Typography variant="h4">Vendors</Typography>
-        <Button variant="contained" onClick={() => setOpen(true)}>
-          Add Vendor
-        </Button>
-      </div>
+    <Box>
+      <Box display="flex" justifyContent="space-between" mb={2}>
+        <Typography variant="h4" fontWeight="bold">
+          Vendor Monitoring
+        </Typography>
+        <Button variant="contained">+ Add Vendor</Button>
+      </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ borderRadius: 3 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>GST Number</TableCell>
-              <TableCell>Trust Score</TableCell>
+              <TableCell>Vendor</TableCell>
+              <TableCell width={200}>Trust Score</TableCell>
               <TableCell>Credit Points</TableCell>
-              <TableCell>Risk Level</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {vendors.map((vendor) => (
-              <TableRow key={vendor.id}>
-                <TableCell>{vendor.name}</TableCell>
-                <TableCell>{vendor.gst_number}</TableCell>
-                <TableCell>{vendor.trust_score}</TableCell>
-                <TableCell>{vendor.credit_points}</TableCell>
-                <TableCell>
-                  <Chip label={vendor.risk_level} color={getRiskColor(vendor.risk_level)} />
-                </TableCell>
-              </TableRow>
-            ))}
+            {vendors.map((v) => {
+              const status = getStatus(v.trust_score);
+              return (
+                <TableRow key={v.id}>
+                  <TableCell>
+                    <Typography fontWeight="bold">{v.name}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      GST: {v.gst_number}
+                    </Typography>
+                  </TableCell>
+
+                  <TableCell>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <LinearProgress
+                        variant="determinate"
+                        value={v.trust_score}
+                        sx={{
+                          width: 120,
+                          height: 8,
+                          borderRadius: 5,
+                        }}
+                      />
+                      <Typography fontWeight="bold">
+                        {v.trust_score}
+                      </Typography>
+                    </Box>
+                  </TableCell>
+
+                  <TableCell>{v.credit_points}</TableCell>
+
+                  <TableCell>
+                    <Chip
+                      label={status.label}
+                      color={status.color}
+                      variant="outlined"
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
-
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Add New Vendor</DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Vendor Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="GST Number"
-            value={formData.gst_number}
-            onChange={(e) => setFormData({ ...formData, gst_number: e.target.value })}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Credit Points"
-            type="number"
-            value={formData.credit_points}
-            onChange={(e) => setFormData({ ...formData, credit_points: parseInt(e.target.value) })}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained">Create</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+    </Box>
   );
-};
-
-export default Vendors;
+}

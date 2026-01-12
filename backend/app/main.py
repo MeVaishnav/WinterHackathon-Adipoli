@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
 from .routes import vendors, analytics
 from .ml.risk_model import predict_risk
+from .schemas import TrustScoreRequest
+from .ml.risk_model import predict_risk
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -27,5 +29,5 @@ def root():
     return {"message": "CredAI backend running 🚀"}
 
 @app.post("/ml/predict")
-def ml_predict(credit_points: int, vendor_age_days: int = 30):
-    return predict_risk(credit_points, vendor_age_days)
+def ml_predict(payload: TrustScoreRequest):
+    return predict_risk(payload.dict())
