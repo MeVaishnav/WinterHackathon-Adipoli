@@ -1,20 +1,38 @@
-def calculate_score(df):
-    score = 100
+def calculate_trust_score(df):
+    score = 0
 
+    total_credit = df["credit"].sum()
+    total_debit = df["debit"].sum()
     avg_balance = df["balance"].mean()
-    income = df["credit"].sum()
-    overdrafts = (df["balance"] < 1000).sum()
+    credit_count = (df["credit"] > 0).sum()
+    low_balance_events = (df["balance"] < 1000).sum()
 
-    if avg_balance < 5000:
-        score -= 20
+    # Income strength (30)
+    score += 30 if total_credit >= 50000 else \
+             25 if total_credit >= 30000 else \
+             20 if total_credit >= 15000 else 10
 
-    if overdrafts > 3:
-        score -= 30
+    # Income stability (25)
+    score += 25 if credit_count >= 20 else \
+             18 if credit_count >= 10 else \
+             12 if credit_count >= 5 else 5
 
-    if income > 30000:
-        score += 20
+    # Balance health (20)
+    score += 20 if avg_balance >= 15000 else \
+             15 if avg_balance >= 8000 else \
+             10 if avg_balance >= 3000 else 5
 
-    score = max(0, min(score, 100))
+    # Spending control (15)
+    ratio = total_credit / max(total_debit, 1)
+    score += 15 if ratio >= 1.5 else \
+             10 if ratio >= 1.1 else 5
+
+    # Risk penalties (-30)
+    score -= 30 if low_balance_events > 10 else \
+             20 if low_balance_events > 5 else \
+             10 if low_balance_events > 2 else 0
+
+    score = max(0, min(100, score))
 
     decision = (
         "Eligible for Loan" if score >= 70
@@ -24,10 +42,5 @@ def calculate_score(df):
 
     return {
         "trust_score": score,
-        "decision": decision,
-        "metrics": {
-            "average_balance": round(avg_balance, 2),
-            "total_income": income,
-            "overdrafts": overdrafts
-        }
+        "decision": decision
     }
