@@ -15,7 +15,7 @@ Traditional credit scoring systems rely heavily on historical loan data and bure
 
 CrediAI solves this problem by providing an alternative credit scoring mechanism based on business activity and behavior rather than past loans.
 
-# Demo Video Link: <insert Google Drive link to the demo video of the working of your project>
+# Demo Video Link: https://drive.google.com/drive/folders/1fYKf2rz7AnHm0ME8JNdEzBm8MD7oDzgM?usp=drive_link
 
 ## Solution Overview
 CrediAI analyzes vendor data such as:
@@ -30,7 +30,6 @@ CrediAI analyzes vendor data such as:
 Using machine learning models, the platform predicts:
 - **Trust Score (0–100)**
 - **Risk Category (Low / Medium / High)**
-- **Loan Approval Decision (Approve / Reject)**
 
 ## Key Features
 - AI-based trust score generation
@@ -49,26 +48,12 @@ Using machine learning models, the platform predicts:
 - Version Control: Git & GitHub
 
 ## Google Technologies Used
-> ⚠️ Using Google products is **mandatory** for this hackathon.
-
-List the Google technologies you used and clearly explain **why** you chose them.
-
-**Example:**
-- **Firebase Authentication** – For secure and easy user authentication
-- **Firebase Firestore** – To store and manage real-time data
-- **Google Maps API** – To enable location-based features
-
-## Setup Instructions
-Steps to run the project locally:
-1. Clone the repository
-2. Install dependencies
-3. Add environment variables (if any)
-4. Run the project
+- **Google Gemini API** – Used to provide explainable AI insights for credit decisions by generating human-readable reasoning for trust scores and risk levels, improving transparency and user understanding.
 
 ## Team Members
-- Snehil S Naik
-- Vaishnav C S
-- Yash G Shetty
-- Veekshith B
+- Snehil S Naik - Backend 
+- Vaishnav C S - Frontend
+- Yash G Shetty - Backend
+- Veekshith B - Frontend
 
 
